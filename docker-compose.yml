@@ -1,0 +1,55 @@
+version: "3.7"
+
+services:
+  web:
+    container_name: Web
+    build: ./apache-php
+    ports:
+      - 80:80
+    depends_on:
+        - postgresql
+    volumes:
+      - ./projects:/var/www/html
+      - ./logs:/var/log/apache2
+  postgresql:
+    image: postgres
+    restart: always
+    container_name: Database
+    environment:
+        POSTGRES_PASSWORD: postgres
+        POSTGRES_USER: postgres
+    volumes:
+        - ./postgres/pgdata:/var/lib/postgresql/data
+    ports:
+        - 5432:5432
+  redis:
+    image: redis
+    container_name: Redis
+  mongo:
+      image: mongo
+      container_name: Mongo
+      restart: always
+      ports:
+        - 27017:27017
+      # environment:
+      #   MONGO_INITDB_ROOT_USERNAME: root
+      #   MONGO_INITDB_ROOT_PASSWORD: example
+  mongoexpress:
+      image: mongo-express
+      container_name: MongoExpress
+      restart: always
+      ports:
+        - 8081:8081
+      links:
+        - mongo
+      environment:
+        - ME_CONFIG_MONGODB_URL=mongodb://mongo:27017
+  grafana:
+    image: grafana/grafana:5.1.0
+    container_name: Grafana
+    ports:
+      - 3000:3000
+
+        # jmonte8@bancodebogota.com.co
+        # vbolano@bancodebogota.com.co
+        # lbern19@bancodebogota.com.co Lina bernal
